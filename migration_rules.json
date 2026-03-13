@@ -1,0 +1,724 @@
+{
+  "_metadata": {
+    "description": "Apache Airflow 2 to 3 migration transformation rules",
+    "sources": [
+      "https://airflow.apache.org/docs/apache-airflow/3.0.0/installation/upgrading_to_airflow3.html",
+      "https://docs.astral.sh/ruff/rules/airflow3-removal/",
+      "https://docs.astral.sh/ruff/rules/airflow3-moved-to-provider/",
+      "https://docs.astral.sh/ruff/rules/airflow3-suggested-update/",
+      "https://cwiki.apache.org/confluence/display/AIRFLOW/Airflow+3+user+facing+changes",
+      "https://github.com/apache/airflow/issues/41641",
+      "https://www.astronomer.io/docs/learn/airflow-upgrade-2-3"
+    ],
+    "ruff_rules": ["AIR301", "AIR302", "AIR311", "AIR312"]
+  },
+
+  "import_path_changes": {
+    "_description": "Module/class imports that moved to new locations",
+
+    "standard_provider_moves": {
+      "_description": "Core operators/sensors/hooks moved to apache-airflow-providers-standard (AIR302/AIR312)",
+      "_package": "apache-airflow-providers-standard",
+      "modules": [
+        {"old": "airflow.operators.bash_operator", "new": "airflow.providers.standard.operators.bash"},
+        {"old": "airflow.operators.bash", "new": "airflow.providers.standard.operators.bash"},
+        {"old": "airflow.operators.python_operator", "new": "airflow.providers.standard.operators.python"},
+        {"old": "airflow.operators.python", "new": "airflow.providers.standard.operators.python"},
+        {"old": "airflow.operators.dummy_operator", "new": "airflow.providers.standard.operators.empty"},
+        {"old": "airflow.operators.dummy", "new": "airflow.providers.standard.operators.empty"},
+        {"old": "airflow.operators.empty", "new": "airflow.providers.standard.operators.empty"},
+        {"old": "airflow.operators.datetime", "new": "airflow.providers.standard.operators.datetime"},
+        {"old": "airflow.operators.trigger_dagrun", "new": "airflow.providers.standard.operators.trigger_dagrun"},
+        {"old": "airflow.operators.dagrun_operator", "new": "airflow.providers.standard.operators.trigger_dagrun"},
+        {"old": "airflow.operators.latest_only_operator", "new": "airflow.providers.standard.operators.latest_only"},
+        {"old": "airflow.operators.latest_only", "new": "airflow.providers.standard.operators.latest_only"},
+        {"old": "airflow.operators.weekday", "new": "airflow.providers.standard.operators.weekday"},
+        {"old": "airflow.sensors.external_task_sensor", "new": "airflow.providers.standard.sensors.external_task"},
+        {"old": "airflow.sensors.external_task", "new": "airflow.providers.standard.sensors.external_task"},
+        {"old": "airflow.sensors.time_delta", "new": "airflow.providers.standard.sensors.time_delta"},
+        {"old": "airflow.sensors.date_time", "new": "airflow.providers.standard.sensors.date_time"},
+        {"old": "airflow.sensors.filesystem", "new": "airflow.providers.standard.sensors.filesystem"},
+        {"old": "airflow.sensors.python", "new": "airflow.providers.standard.sensors.python"},
+        {"old": "airflow.sensors.time_sensor", "new": "airflow.providers.standard.sensors.time"},
+        {"old": "airflow.sensors.weekday", "new": "airflow.providers.standard.sensors.weekday"},
+        {"old": "airflow.sensors.bash", "new": "airflow.providers.standard.sensors.bash"},
+        {"old": "airflow.hooks.filesystem", "new": "airflow.providers.standard.hooks.filesystem"},
+        {"old": "airflow.hooks.package_index", "new": "airflow.providers.standard.hooks.package_index"},
+        {"old": "airflow.hooks.subprocess", "new": "airflow.providers.standard.hooks.subprocess"},
+        {"old": "airflow.triggers.external_task", "new": "airflow.providers.standard.triggers.external_task"},
+        {"old": "airflow.triggers.file", "new": "airflow.providers.standard.triggers.file"},
+        {"old": "airflow.triggers.temporal", "new": "airflow.providers.standard.triggers.temporal"}
+      ],
+      "class_renames": [
+        {"old_module": "airflow.operators.dummy_operator", "old_class": "DummyOperator", "new_module": "airflow.providers.standard.operators.empty", "new_class": "EmptyOperator"},
+        {"old_module": "airflow.operators.dummy", "old_class": "DummyOperator", "new_module": "airflow.providers.standard.operators.empty", "new_class": "EmptyOperator"},
+        {"old_module": "airflow.sensors.external_task", "old_class": "ExternalTaskSensorLink", "new_module": "airflow.providers.standard.sensors.external_task", "new_class": "ExternalDagLink"},
+        {"old_module": "airflow.sensors.time_delta", "old_class": "WaitSensor", "new_module": "airflow.providers.standard.sensors.time_delta", "new_class": "WaitSensor"},
+        {"old_module": "airflow.kubernetes.pod_launcher", "old_class": "PodLauncher", "new_module": "airflow.providers.cncf.kubernetes.utils.pod_manager", "new_class": "PodManager"},
+        {"old_module": "airflow.kubernetes.pod_launcher", "old_class": "PodStatus", "new_module": "airflow.providers.cncf.kubernetes.utils.pod_manager", "new_class": "PodPhase"}
+      ]
+    },
+
+    "sdk_moves": {
+      "_description": "Imports that moved to airflow.sdk (AIR311)",
+      "classes": [
+        {"old": "airflow.models.DAG", "new": "airflow.sdk.DAG"},
+        {"old": "airflow.models.dag.DAG", "new": "airflow.sdk.DAG"},
+        {"old": "airflow.models.Variable", "new": "airflow.sdk.Variable"},
+        {"old": "airflow.models.Connection", "new": "airflow.sdk.Connection"},
+        {"old": "airflow.models.Param", "new": "airflow.sdk.definitions.param.Param"},
+        {"old": "airflow.models.baseoperator.BaseOperator", "new": "airflow.sdk.BaseOperator"},
+        {"old": "airflow.models.baseoperator.BaseOperatorLink", "new": "airflow.sdk.BaseOperatorLink"},
+        {"old": "airflow.sensors.base.BaseSensorOperator", "new": "airflow.sdk.bases.sensor.BaseSensorOperator"},
+        {"old": "airflow.sensors.base_sensor_operator.BaseSensorOperator", "new": "airflow.sdk.bases.sensor.BaseSensorOperator"},
+        {"old": "airflow.sensors.base.PokeReturnValue", "new": "airflow.sdk.bases.sensor.PokeReturnValue"},
+        {"old": "airflow.sensors.base.poke_mode_only", "new": "airflow.sdk.bases.sensor.poke_mode_only"},
+        {"old": "airflow.notifications.basenotifier.BaseNotifier", "new": "airflow.sdk.bases.notifier.BaseNotifier"},
+        {"old": "airflow.models.TaskGroup", "new": "airflow.sdk.TaskGroup"},
+        {"old": "airflow.utils.task_group.TaskGroup", "new": "airflow.sdk.TaskGroup"}
+      ],
+      "decorators": [
+        {"old": "airflow.decorators.dag", "new": "airflow.sdk.dag"},
+        {"old": "airflow.decorators.task", "new": "airflow.sdk.task"},
+        {"old": "airflow.decorators.task_group", "new": "airflow.sdk.task_group"},
+        {"old": "airflow.decorators.setup", "new": "airflow.sdk.setup"},
+        {"old": "airflow.decorators.teardown", "new": "airflow.sdk.teardown"}
+      ],
+      "functions": [
+        {"old": "airflow.operators.python.get_current_context", "new": "airflow.sdk.get_current_context"},
+        {"old": "airflow.utils.helpers.chain", "new": "airflow.sdk.chain"},
+        {"old": "airflow.utils.helpers.cross_downstream", "new": "airflow.sdk.cross_downstream"},
+        {"old": "airflow.models.baseoperator.chain", "new": "airflow.sdk.chain"},
+        {"old": "airflow.models.baseoperator.chain_linear", "new": "airflow.sdk.chain_linear"},
+        {"old": "airflow.models.baseoperator.cross_downstream", "new": "airflow.sdk.cross_downstream"},
+        {"old": "airflow.utils.get_parsing_context", "new": "airflow.sdk.get_parsing_context"}
+      ],
+      "io": [
+        {"old": "airflow.io.ObjectStoragePath", "new": "airflow.sdk.ObjectStoragePath"},
+        {"old": "airflow.io.attach", "new": "airflow.sdk.io.attach"}
+      ]
+    },
+
+    "dataset_to_asset_renames": {
+      "_description": "Dataset -> Asset terminology change throughout Airflow 3",
+      "core": [
+        {"old": "airflow.datasets.Dataset", "new": "airflow.sdk.Asset"},
+        {"old": "airflow.Dataset", "new": "airflow.sdk.Asset"},
+        {"old": "airflow.datasets.DatasetAlias", "new": "airflow.sdk.AssetAlias"},
+        {"old": "airflow.datasets.DatasetAll", "new": "airflow.sdk.AssetAll"},
+        {"old": "airflow.datasets.DatasetAny", "new": "airflow.sdk.AssetAny"},
+        {"old": "airflow.datasets.metadata.Metadata", "new": "airflow.sdk.Metadata"},
+        {"old": "airflow.datasets.manager.DatasetManager", "new": "airflow.assets.manager.AssetManager"},
+        {"old": "airflow.datasets.manager.dataset_manager", "new": "airflow.assets.manager.asset_manager"},
+        {"old": "airflow.datasets.manager.resolve_dataset_manager", "new": "airflow.assets.manager.resolve_asset_manager"},
+        {"old": "airflow.models.dataset.expand_alias_to_datasets", "new": "airflow.models.asset.expand_alias_to_assets"},
+        {"old": "airflow.timetables.simple.DatasetTriggeredTimetable", "new": "airflow.timetables.simple.AssetTriggeredTimetable"},
+        {"old": "airflow.timetables.datasets.DatasetOrTimeSchedule", "new": "airflow.timetables.assets.AssetOrTimeSchedule"},
+        {"old": "airflow.lineage.hook.DatasetLineageInfo", "new": "airflow.lineage.hook.AssetLineageInfo"},
+        {"old": "airflow.security.permissions.RESOURCE_DATASET", "new": "airflow.security.permissions.RESOURCE_ASSET"},
+        {"old": "airflow.listeners.spec.dataset.on_dataset_created", "new": "airflow.listeners.spec.asset.on_asset_created"},
+        {"old": "airflow.listeners.spec.dataset.on_dataset_changed", "new": "airflow.listeners.spec.asset.on_asset_changed"},
+        {"old": "airflow.auth.managers.models.resource_details.DatasetDetails", "new": "airflow.api_fastapi.auth.managers.models.resource_details.AssetDetails"}
+      ],
+      "providers": [
+        {"old": "airflow.providers.amazon.aws.datasets.s3.create_dataset", "new": "airflow.providers.amazon.aws.assets.s3.create_asset"},
+        {"old": "airflow.providers.amazon.aws.datasets.s3.convert_dataset_to_openlineage", "new": "airflow.providers.amazon.aws.assets.s3.convert_asset_to_openlineage"},
+        {"old": "airflow.providers.amazon.aws.auth_manager.avp.entities.AvpEntities.DATASET", "new": "airflow.providers.amazon.aws.auth_manager.avp.entities.AvpEntities.ASSET"},
+        {"old": "airflow.providers.common.io.datasets.file.create_dataset", "new": "airflow.providers.common.io.assets.file.create_asset"},
+        {"old": "airflow.providers.common.io.datasets.file.convert_dataset_to_openlineage", "new": "airflow.providers.common.io.assets.file.convert_asset_to_openlineage"},
+        {"old": "airflow.providers.google.datasets.bigquery.create_dataset", "new": "airflow.providers.google.assets.bigquery.create_asset"},
+        {"old": "airflow.providers.google.datasets.gcs.create_dataset", "new": "airflow.providers.google.assets.gcs.create_asset"},
+        {"old": "airflow.providers.google.datasets.gcs.convert_dataset_to_openlineage", "new": "airflow.providers.google.assets.gcs.convert_asset_to_openlineage"},
+        {"old": "airflow.providers.mysql.datasets.mysql.sanitize_uri", "new": "airflow.providers.mysql.assets.mysql.sanitize_uri"},
+        {"old": "airflow.providers.postgres.datasets.postgres.sanitize_uri", "new": "airflow.providers.postgres.assets.postgres.sanitize_uri"},
+        {"old": "airflow.providers.trino.datasets.trino.sanitize_uri", "new": "airflow.providers.trino.assets.trino.sanitize_uri"},
+        {"old": "airflow.providers.openlineage.utils.utils.DatasetInfo", "new": "airflow.providers.openlineage.utils.utils.AssetInfo"},
+        {"old": "airflow.providers.openlineage.utils.utils.translate_airflow_dataset", "new": "airflow.providers.openlineage.utils.utils.translate_airflow_asset"}
+      ]
+    },
+
+    "legacy_operator_moves_to_providers": {
+      "_description": "Old-style operator module paths moved to provider packages (AIR302)",
+      "amazon": [
+        {"old": "airflow.hooks.S3_hook", "new": "airflow.providers.amazon.aws.hooks.s3"},
+        {"old": "airflow.operators.gcs_to_s3", "new": "airflow.providers.amazon.aws.transfers.gcs_to_s3"},
+        {"old": "airflow.operators.google_api_to_s3_transfer", "new": "airflow.providers.amazon.aws.transfers.google_api_to_s3"},
+        {"old": "airflow.operators.redshift_to_s3_operator", "new": "airflow.providers.amazon.aws.transfers.redshift_to_s3"},
+        {"old": "airflow.operators.s3_file_transform_operator", "new": "airflow.providers.amazon.aws.operators.s3"},
+        {"old": "airflow.operators.s3_to_redshift_operator", "new": "airflow.providers.amazon.aws.transfers.s3_to_redshift"},
+        {"old": "airflow.sensors.s3_key_sensor", "new": "airflow.providers.amazon.aws.sensors.s3"}
+      ],
+      "celery": [
+        {"old": "airflow.config_templates.default_celery", "new": "airflow.providers.celery.executors.default_celery"},
+        {"old": "airflow.executors.celery_executor", "new": "airflow.providers.celery.executors.celery_executor"},
+        {"old": "airflow.executors.celery_kubernetes_executor", "new": "airflow.providers.celery.executors.celery_kubernetes_executor"}
+      ],
+      "common_sql": [
+        {"old": "airflow.hooks.dbapi", "new": "airflow.providers.common.sql.hooks.sql"},
+        {"old": "airflow.hooks.dbapi_hook", "new": "airflow.providers.common.sql.hooks.sql"},
+        {"old": "airflow.operators.check_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.druid_check_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.presto_check_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.sql", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.jdbc_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.mssql_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.mysql_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.oracle_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.postgres_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.operators.sqlite_operator", "new": "airflow.providers.common.sql.operators.sql"},
+        {"old": "airflow.sensors.sql", "new": "airflow.providers.common.sql.sensors.sql"},
+        {"old": "airflow.sensors.sql_sensor", "new": "airflow.providers.common.sql.sensors.sql"}
+      ],
+      "docker": [
+        {"old": "airflow.hooks.docker_hook", "new": "airflow.providers.docker.hooks.docker"},
+        {"old": "airflow.operators.docker_operator", "new": "airflow.providers.docker.operators.docker"}
+      ],
+      "http": [
+        {"old": "airflow.hooks.http_hook", "new": "airflow.providers.http.hooks.http"},
+        {"old": "airflow.operators.http_operator", "new": "airflow.providers.http.operators.http"},
+        {"old": "airflow.sensors.http_sensor", "new": "airflow.providers.http.sensors.http"}
+      ],
+      "smtp": [
+        {"old": "airflow.operators.email_operator", "new": "airflow.providers.smtp.operators.smtp"},
+        {"old": "airflow.operators.email", "new": "airflow.providers.smtp.operators.smtp"}
+      ],
+      "fab": [
+        {"old": "airflow.api.auth.backend.basic_auth", "new": "airflow.providers.fab.auth_manager.api.auth.backend.basic_auth"},
+        {"old": "airflow.api.auth.backend.kerberos_auth", "new": "airflow.providers.fab.auth_manager.api.auth.backend.kerberos_auth"},
+        {"old": "airflow.auth.managers.fab.fab_auth_manager", "new": "airflow.providers.fab.auth_manager.fab_auth_manager"},
+        {"old": "airflow.auth.managers.fab.security_manager.override", "new": "airflow.providers.fab.auth_manager.security_manager.override"},
+        {"old": "airflow.www.security", "new": "airflow.providers.fab.auth_manager.security_manager.override"}
+      ],
+      "kubernetes": [
+        {"old": "airflow.executors.kubernetes_executor_types", "new": "airflow.providers.cncf.kubernetes.executors.kubernetes_executor_types"},
+        {"old": "airflow.kubernetes.k8s_model", "new": "airflow.providers.cncf.kubernetes.k8s_model"},
+        {"old": "airflow.kubernetes.kube_client", "new": "airflow.providers.cncf.kubernetes.kube_client"},
+        {"old": "airflow.kubernetes.kubernetes_helper_functions", "new": "airflow.providers.cncf.kubernetes.kubernetes_helper_functions"},
+        {"old": "airflow.kubernetes.pod", "new": "kubernetes.client.models"},
+        {"old": "airflow.kubernetes.pod_generator", "new": "airflow.providers.cncf.kubernetes.pod_generator"},
+        {"old": "airflow.kubernetes.pod_generator_deprecated", "new": "airflow.providers.cncf.kubernetes.pod_generator"},
+        {"old": "airflow.kubernetes.pod_launcher", "new": "airflow.providers.cncf.kubernetes.utils.pod_manager"},
+        {"old": "airflow.kubernetes.pod_launcher_deprecated", "new": "airflow.providers.cncf.kubernetes.utils.pod_manager"},
+        {"old": "airflow.kubernetes.pod_runtime_info_env", "new": "kubernetes.client.models"},
+        {"old": "airflow.kubernetes.secret", "new": "airflow.providers.cncf.kubernetes.secret"},
+        {"old": "airflow.kubernetes.volume", "new": "kubernetes.client.models"},
+        {"old": "airflow.kubernetes.volume_mount", "new": "kubernetes.client.models"}
+      ],
+      "postgres": [
+        {"old": "airflow.hooks.postgres_hook", "new": "airflow.providers.postgres.hooks.postgres"}
+      ],
+      "mysql": [
+        {"old": "airflow.hooks.mysql_hook", "new": "airflow.providers.mysql.hooks.mysql"},
+        {"old": "airflow.operators.presto_to_mysql", "new": "airflow.providers.mysql.transfers.presto_to_mysql"}
+      ],
+      "hive": [
+        {"old": "airflow.hooks.hive_hooks", "new": "airflow.providers.apache.hive.hooks.hive"},
+        {"old": "airflow.macros.hive", "new": "airflow.providers.apache.hive.macros.hive"},
+        {"old": "airflow.operators.hive_operator", "new": "airflow.providers.apache.hive.operators.hive"},
+        {"old": "airflow.operators.hive_stats_operator", "new": "airflow.providers.apache.hive.operators.hive_stats"},
+        {"old": "airflow.operators.hive_to_druid", "new": "airflow.providers.apache.druid.transfers.hive_to_druid"},
+        {"old": "airflow.operators.hive_to_mysql", "new": "airflow.providers.apache.hive.transfers.hive_to_mysql"},
+        {"old": "airflow.operators.hive_to_samba_operator", "new": "airflow.providers.apache.hive.transfers.hive_to_samba"},
+        {"old": "airflow.operators.mssql_to_hive", "new": "airflow.providers.apache.hive.transfers.mssql_to_hive"},
+        {"old": "airflow.operators.mysql_to_hive", "new": "airflow.providers.apache.hive.transfers.mysql_to_hive"},
+        {"old": "airflow.operators.s3_to_hive_operator", "new": "airflow.providers.apache.hive.transfers.s3_to_hive"},
+        {"old": "airflow.sensors.hive_partition_sensor", "new": "airflow.providers.apache.hive.sensors.hive_partition"},
+        {"old": "airflow.sensors.metastore_partition_sensor", "new": "airflow.providers.apache.hive.sensors.metastore_partition"},
+        {"old": "airflow.sensors.named_hive_partition_sensor", "new": "airflow.providers.apache.hive.sensors.named_hive_partition"}
+      ],
+      "hdfs": [
+        {"old": "airflow.hooks.webhdfs_hook", "new": "airflow.providers.apache.hdfs.hooks.webhdfs"},
+        {"old": "airflow.sensors.web_hdfs_sensor", "new": "airflow.providers.apache.hdfs.sensors.web_hdfs"}
+      ],
+      "other": [
+        {"old": "airflow.hooks.oracle_hook", "new": "airflow.providers.oracle.hooks.oracle"},
+        {"old": "airflow.hooks.presto_hook", "new": "airflow.providers.presto.hooks.presto"},
+        {"old": "airflow.hooks.jdbc_hook", "new": "airflow.providers.jdbc.hooks.jdbc"},
+        {"old": "airflow.hooks.mssql_hook", "new": "airflow.providers.microsoft.mssql.hooks.mssql"},
+        {"old": "airflow.hooks.samba_hook", "new": "airflow.providers.samba.hooks.samba"},
+        {"old": "airflow.hooks.slack_hook", "new": "airflow.providers.slack.hooks.slack"},
+        {"old": "airflow.hooks.sqlite_hook", "new": "airflow.providers.sqlite.hooks.sqlite"},
+        {"old": "airflow.hooks.zendesk_hook", "new": "airflow.providers.zendesk.hooks.zendesk"},
+        {"old": "airflow.hooks.pig_hook", "new": "airflow.providers.apache.pig.hooks.pig"},
+        {"old": "airflow.hooks.druid_hook", "new": "airflow.providers.apache.druid.hooks.druid"},
+        {"old": "airflow.operators.pig_operator", "new": "airflow.providers.apache.pig.operators.pig"},
+        {"old": "airflow.operators.slack_operator", "new": "airflow.providers.slack.operators.slack"},
+        {"old": "airflow.operators.papermill_operator", "new": "airflow.providers.papermill.operators.papermill"},
+        {"old": "airflow.executors.dask_executor", "new": "airflow.providers.daskexecutor.executors.dask_executor"}
+      ]
+    },
+
+    "core_import_changes": {
+      "_description": "Core airflow import path changes (AIR301)",
+      "hooks": [
+        {"old": "airflow.hooks.base_hook.BaseHook", "new": "airflow.hooks.base.BaseHook"}
+      ],
+      "auth": [
+        {"old": "airflow.api_connexion.security.requires_access", "new": "airflow.api_fastapi.core_api.security.requires_access_*"},
+        {"old": "airflow.api_connexion.security.requires_access_dataset", "new": "airflow.api_fastapi.core_api.security.requires_access_asset"},
+        {"old": "airflow.auth.managers.base_auth_manager.BaseAuthManager", "new": "airflow.api_fastapi.auth.managers.base_auth_manager.BaseAuthManager"}
+      ],
+      "metrics": [
+        {"old": "airflow.metrics.validators.AllowListValidator", "new": "airflow.metrics.validators.PatternAllowListValidator"},
+        {"old": "airflow.metrics.validators.BlockListValidator", "new": "airflow.metrics.validators.PatternBlockListValidator"}
+      ],
+      "secrets": [
+        {"old": "airflow.secrets.local_filesystem.load_connections", "new": "airflow.secrets.local_filesystem.load_connections_dict"}
+      ],
+      "utils": [
+        {"old": "airflow.utils.log.secrets_masker", "new": "airflow.sdk.execution_time.secrets_masker"},
+        {"old": "airflow.utils.file.TemporaryDirectory", "new": "tempfile.TemporaryDirectory"},
+        {"old": "airflow.utils.file.mkdirs", "new": "pathlib.Path.mkdir"}
+      ],
+      "configuration": [
+        {"old": "airflow.configuration.as_dict", "new": "airflow.configuration.conf.as_dict"},
+        {"old": "airflow.configuration.get", "new": "airflow.configuration.conf.get"},
+        {"old": "airflow.configuration.getboolean", "new": "airflow.configuration.conf.getboolean"},
+        {"old": "airflow.configuration.getfloat", "new": "airflow.configuration.conf.getfloat"},
+        {"old": "airflow.configuration.getint", "new": "airflow.configuration.conf.getint"},
+        {"old": "airflow.configuration.has_option", "new": "airflow.configuration.conf.has_option"},
+        {"old": "airflow.configuration.remove_option", "new": "airflow.configuration.conf.remove_option"},
+        {"old": "airflow.configuration.set", "new": "airflow.configuration.conf.set"}
+      ],
+      "python_version_constants": [
+        {"old": "airflow.PY36", "new": "sys.version_info"},
+        {"old": "airflow.PY37", "new": "sys.version_info"},
+        {"old": "airflow.PY38", "new": "sys.version_info"},
+        {"old": "airflow.PY39", "new": "sys.version_info"},
+        {"old": "airflow.PY310", "new": "sys.version_info"},
+        {"old": "airflow.PY311", "new": "sys.version_info"},
+        {"old": "airflow.PY312", "new": "sys.version_info"}
+      ]
+    }
+  },
+
+  "removed_modules": {
+    "_description": "Modules entirely removed in Airflow 3",
+    "modules": [
+      "airflow.contrib",
+      "airflow.operators.subdag",
+      "airflow.kubernetes.pod",
+      "airflow.kubernetes.volume",
+      "airflow.kubernetes.volume_mount",
+      "airflow.kubernetes.pod_runtime_info_env",
+      "airflow.api.auth.backend.default",
+      "airflow.www.security"
+    ]
+  },
+
+  "removed_classes_and_functions": {
+    "_description": "Classes and functions removed entirely (no replacement)",
+    "items": [
+      {"path": "airflow.operators.subdag.SubDagOperator", "replacement": "Use TaskGroup instead"},
+      {"path": "airflow.triggers.external_task.TaskStateTrigger", "replacement": null},
+      {"path": "airflow.utils.dag_cycle_tester.test_cycle", "replacement": "Use check_cycle()"},
+      {"path": "airflow.utils.db.create_session", "replacement": null},
+      {"path": "airflow.utils.state.SHUTDOWN", "replacement": null},
+      {"path": "airflow.utils.state.terminating_states", "replacement": null},
+      {"path": "airflow.utils.trigger_rule.TriggerRule.DUMMY", "replacement": "Use TriggerRule.ALWAYS"},
+      {"path": "airflow.utils.trigger_rule.TriggerRule.NONE_FAILED_OR_SKIPPED", "replacement": "Use TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS"},
+      {"path": "airflow.datasets.manager.DatasetAliasEvent", "replacement": null},
+      {"path": "airflow.datasets.DatasetEvent", "replacement": "Use dict[str, Any]"},
+      {"path": "airflow.executors.executor_loader.UNPICKLEABLE_EXECUTORS", "replacement": null},
+      {"path": "airflow.www.auth.has_access", "replacement": "Use has_access_* decorators"},
+      {"path": "airflow.www.utils.get_sensitive_variables_fields", "replacement": "airflow.utils.log.secrets_masker.get_sensitive_variables_fields"},
+      {"path": "airflow.www.utils.should_hide_value_for_key", "replacement": "airflow.utils.log.secrets_masker.should_hide_value_for_key"}
+    ]
+  },
+
+  "removed_context_variables": {
+    "_description": "Task context variables removed in Airflow 3",
+    "removed": [
+      {"old": "execution_date", "replacement": "logical_date (note: semantics changed - now equals run_after, not data_interval_start)"},
+      {"old": "next_ds", "replacement": null},
+      {"old": "next_ds_nodash", "replacement": null},
+      {"old": "next_execution_date", "replacement": null},
+      {"old": "prev_ds", "replacement": null},
+      {"old": "prev_ds_nodash", "replacement": null},
+      {"old": "prev_execution_date", "replacement": null},
+      {"old": "prev_execution_date_success", "replacement": null},
+      {"old": "tomorrow_ds", "replacement": null},
+      {"old": "tomorrow_ds_nodash", "replacement": null},
+      {"old": "yesterday_ds", "replacement": null},
+      {"old": "yesterday_ds_nodash", "replacement": null},
+      {"old": "conf", "replacement": "Use airflow.configuration.conf directly"}
+    ],
+    "semantic_changes": [
+      {
+        "variable": "logical_date",
+        "change": "In Airflow 2, logical_date == data_interval_start. In Airflow 3, logical_date == run_after. For asset-triggered DAGs, logical_date can be None."
+      },
+      {
+        "variable": "data_interval_start",
+        "change": "For asset-triggered DAG runs without explicit scheduling, data_interval_start/end may not be available (raises KeyError)."
+      }
+    ]
+  },
+
+  "deprecated_parameters": {
+    "_description": "Parameters removed or renamed in Airflow 3",
+
+    "dag_constructor": [
+      {"old_param": "schedule_interval", "new_param": "schedule", "notes": "Use schedule= instead of schedule_interval="},
+      {"old_param": "timetable", "new_param": "schedule", "notes": "Pass timetable object via schedule= parameter"},
+      {"old_param": "fail_stop", "new_param": "fail_fast", "notes": "Parameter renamed"},
+      {"old_param": "concurrency", "new_param": "max_active_tasks", "notes": "Parameter renamed"},
+      {"old_param": "sla_miss_callback", "new_param": null, "notes": "SLA feature removed entirely"},
+      {"old_param": "default_view", "new_param": null, "notes": "Removed"},
+      {"old_param": "orientation", "new_param": null, "notes": "Removed"}
+    ],
+
+    "base_operator": [
+      {"old_param": "task_concurrency", "new_param": "max_active_tis_per_dag", "notes": "Parameter renamed"},
+      {"old_param": "trigger_rule='dummy'", "new_param": "trigger_rule='always'", "notes": "TriggerRule.DUMMY removed"},
+      {"old_param": "trigger_rule='none_failed_or_skipped'", "new_param": "trigger_rule='none_failed_min_one_success'", "notes": "TriggerRule value renamed"}
+    ],
+
+    "python_operator": [
+      {"old_param": "provide_context", "new_param": null, "notes": "Remove entirely - context is always provided automatically since Airflow 2.0"},
+      {"old_param": "use_dill", "new_param": "serializer='dill'", "notes": "Parameter replaced with serializer parameter"}
+    ],
+
+    "trigger_dag_run_operator": [
+      {"old_param": "execution_date", "new_param": null, "notes": "Removed - use logical_date or run_id"}
+    ],
+
+    "day_of_week_sensor": [
+      {"old_param": "use_task_execution_day", "new_param": "use_task_logical_date", "notes": "Parameter renamed"}
+    ],
+
+    "branch_day_of_week_operator": [
+      {"old_param": "use_task_execution_day", "new_param": "use_task_logical_date", "notes": "Parameter renamed"}
+    ],
+
+    "branch_datetime_operator": [
+      {"old_param": "use_task_execution_date", "new_param": "use_task_logical_date", "notes": "Parameter renamed"}
+    ],
+
+    "task_instance": [
+      {"old_param": "execution_date (in __init__)", "new_param": "run_id", "notes": "Use run_id instead of execution_date"},
+      {"old_param": "activation_dag_runs (in clear_task_instances)", "new_param": "dag_run_state", "notes": "Parameter renamed"}
+    ],
+
+    "file_task_handler": [
+      {"old_param": "filename_template", "new_param": null, "notes": "Removed"}
+    ],
+
+    "dag_clear": [
+      {"old_param": "get_tis", "new_param": null, "notes": "Removed from DAG.clear()"},
+      {"old_param": "recursion_depth", "new_param": null, "notes": "Removed from DAG.clear()"},
+      {"old_param": "max_recursion_depth", "new_param": null, "notes": "Removed from DAG.clear()"}
+    ]
+  },
+
+  "removed_functions_and_utilities": {
+    "_description": "Utility functions that were removed",
+    "dates": [
+      {"old": "airflow.utils.dates.days_ago", "replacement": "pendulum.today('UTC').add(days=-N)"},
+      {"old": "airflow.utils.dates.date_range", "replacement": null},
+      {"old": "airflow.utils.dates.parse_execution_date", "replacement": null},
+      {"old": "airflow.utils.dates.round_time", "replacement": null},
+      {"old": "airflow.utils.dates.scale_time_units", "replacement": null},
+      {"old": "airflow.utils.dates.infer_time_unit", "replacement": null}
+    ],
+    "decorators": [
+      {"old": "airflow.utils.decorators.apply_defaults", "replacement": "Remove entirely - apply_defaults is now unconditional"}
+    ],
+    "dag_model_methods": [
+      {"old": "DAG.date_range()", "replacement": null},
+      {"old": "DAG.is_fixed_time_schedule()", "replacement": null},
+      {"old": "DAG.next_dagrun_after_date()", "replacement": null},
+      {"old": "DAG.get_run_dates()", "replacement": null},
+      {"old": "DAG.normalize_schedule()", "replacement": null},
+      {"old": "DAG.following_schedule()", "replacement": null},
+      {"old": "DAG.previous_schedule()", "replacement": null},
+      {"old": "DAG.concurrency_reached()", "replacement": null},
+      {"old": "DAG.set_dag_runs_state()", "replacement": null},
+      {"old": "DAG.bulk_sync_to_db()", "replacement": null},
+      {"old": "DAG.get_num_active_runs()", "replacement": null},
+      {"old": "DAG.tree_view()", "replacement": "Use 'airflow dag show' CLI command"},
+      {"old": "DAG.get_tree_view()", "replacement": "Use 'airflow dag show' CLI command"},
+      {"old": "DAG.full_filepath", "replacement": null},
+      {"old": "DAG.filepath", "replacement": null},
+      {"old": "DAG.concurrency", "replacement": "DAG.max_active_tasks"},
+      {"old": "DAG.normalized_schedule_interval", "replacement": null},
+      {"old": "DAG.latest_execution_date", "replacement": null},
+      {"old": "DAG.is_paused (property)", "replacement": "DAG.get_is_paused()"}
+    ],
+    "task_instance_methods": [
+      {"old": "TaskInstance._try_number", "replacement": "TaskInstance.try_number"},
+      {"old": "TaskInstance.prev_attempted_tries", "replacement": "TaskInstance.try_number"},
+      {"old": "TaskInstance.next_try_number", "replacement": "TaskInstance.try_number + 1"},
+      {"old": "TaskInstance.previous_ti", "replacement": "TaskInstance.get_previous_ti()"},
+      {"old": "TaskInstance.previous_ti_success", "replacement": "TaskInstance.get_previous_ti()"},
+      {"old": "TaskInstance.previous_start_date_success", "replacement": "TaskInstance.get_previous_start_date()"}
+    ],
+    "dag_run_methods": [
+      {"old": "DagRun.get_run()", "replacement": "Use standard SQLAlchemy retrieval"},
+      {"old": "DagRun.get_log_filename_template()", "replacement": "DagRun.get_log_template()"},
+      {"old": "DagRun.is_backfill", "replacement": null},
+      {"old": "DagRun.execution_date", "replacement": "DagRun.logical_date or run_id"}
+    ],
+    "connection_methods": [
+      {"old": "Connection.parse_netloc_to_hostname()", "replacement": null},
+      {"old": "Connection.parse_from_uri()", "replacement": null},
+      {"old": "Connection.log_info()", "replacement": null},
+      {"old": "Connection.debug_info()", "replacement": null}
+    ],
+    "secret_backend_methods": [
+      {"old": "BaseSecretsBackend.get_conn_uri()", "replacement": "BaseSecretsBackend.get_conn_value()"},
+      {"old": "BaseSecretsBackend.get_connections()", "replacement": "BaseSecretsBackend.get_connection()"},
+      {"old": "LocalFilesystemBackend.get_connections()", "replacement": "LocalFilesystemBackend.get_connection()"},
+      {"old": "BaseHook.get_connections()", "replacement": null}
+    ],
+    "task_reschedule": [
+      {"old": "TaskReschedule.query_for_task_instance()", "replacement": null},
+      {"old": "TaskReschedule.find_for_task_instance()", "replacement": null}
+    ],
+    "skip_mixin": [
+      {"old": "SkipMixin.skip(execution_date=...)", "replacement": "Remove execution_date parameter"}
+    ]
+  },
+
+  "method_renames_dataset_to_asset": {
+    "_description": "Instance/class method renames following Dataset->Asset terminology",
+    "AssetManager": [
+      {"old": "register_dataset_change", "new": "register_asset_change"},
+      {"old": "create_datasets", "new": "create_assets"},
+      {"old": "notify_dataset_created", "new": "notify_asset_created"},
+      {"old": "notify_dataset_changed", "new": "notify_asset_changed"},
+      {"old": "notify_dataset_alias_created", "new": "notify_asset_alias_created"}
+    ],
+    "HookLineageCollector": [
+      {"old": "create_dataset", "new": "create_asset"},
+      {"old": "add_input_dataset", "new": "add_input_asset"},
+      {"old": "add_output_dataset", "new": "add_output_asset"},
+      {"old": "collected_datasets", "new": "collected_assets"}
+    ],
+    "AuthManagers": [
+      {"old": "is_authorized_dataset", "new": "is_authorized_asset"}
+    ],
+    "ProvidersManager": [
+      {"old": "initialize_providers_dataset_uri_resources", "new": "initialize_providers_asset_uri_resources"},
+      {"old": "dataset_factories", "new": "asset_factories"},
+      {"old": "dataset_uri_handlers", "new": "asset_uri_handlers"},
+      {"old": "dataset_to_openlineage_converters", "new": "asset_to_openlineage_converters"}
+    ],
+    "DatasetModel": [
+      {"old": "iter_datasets", "new": "iter_assets"},
+      {"old": "iter_dataset_aliases", "new": "iter_asset_aliases"},
+      {"old_attr": "dataset", "new_attr": "asset"}
+    ]
+  },
+
+  "removed_features": {
+    "_description": "Major features entirely removed in Airflow 3",
+    "features": [
+      {"feature": "SubDAGs", "replacement": "Use TaskGroups, Assets, and Data Aware Scheduling"},
+      {"feature": "Sequential Executor", "replacement": "Use LocalExecutor (can use SQLite for local dev)"},
+      {"feature": "CeleryKubernetesExecutor", "replacement": "Use Multiple Executor Configuration"},
+      {"feature": "LocalKubernetesExecutor", "replacement": "Use Multiple Executor Configuration"},
+      {"feature": "SLAs", "replacement": "Will be replaced by Deadline Alerts (Airflow 3.1+)"},
+      {"feature": "--subdir / -S CLI argument", "replacement": "Use DAG bundles"},
+      {"feature": "Experimental REST API", "replacement": "Use stable REST API v2"},
+      {"feature": "XCom pickling (default backend)", "replacement": "Use JSON serialization"},
+      {"feature": "Executor registration via plugins", "replacement": "Treat executors as plain Python classes"},
+      {"feature": "Direct DB access from operators", "replacement": "Use Airflow APIs"}
+    ]
+  },
+
+  "dag_definition_changes": {
+    "_description": "Changes to how DAGs are defined",
+    "constructor_changes": [
+      {
+        "change": "schedule_interval removed",
+        "old": "DAG(dag_id='x', schedule_interval='@daily')",
+        "new": "DAG(dag_id='x', schedule='@daily')"
+      },
+      {
+        "change": "timetable parameter removed",
+        "old": "DAG(dag_id='x', timetable=CronTimetable('0 * * * *'))",
+        "new": "DAG(dag_id='x', schedule=CronTimetable('0 * * * *'))"
+      },
+      {
+        "change": "fail_stop renamed to fail_fast",
+        "old": "DAG(dag_id='x', fail_stop=True)",
+        "new": "DAG(dag_id='x', fail_fast=True)"
+      },
+      {
+        "change": "concurrency renamed",
+        "old": "DAG(dag_id='x', concurrency=16)",
+        "new": "DAG(dag_id='x', max_active_tasks=16)"
+      }
+    ],
+    "decorator_changes": [
+      {
+        "change": "dag decorator moved to SDK",
+        "old": "from airflow.decorators import dag",
+        "new": "from airflow.sdk import dag"
+      },
+      {
+        "change": "task decorator moved to SDK",
+        "old": "from airflow.decorators import task",
+        "new": "from airflow.sdk import task"
+      },
+      {
+        "change": "task_group decorator moved to SDK",
+        "old": "from airflow.decorators import task_group",
+        "new": "from airflow.sdk import task_group"
+      }
+    ],
+    "default_changes": [
+      {"setting": "catchup", "old_default": "True", "new_default": "False"},
+      {"setting": "schedule", "old_default": "timedelta(days=1)", "new_default": "None"},
+      {"setting": "dag_ignore_file_syntax", "old_default": "regexp", "new_default": "glob"},
+      {"setting": "cron interpretation", "old_default": "CronDataIntervalTimetable", "new_default": "CronTriggerTimetable"}
+    ]
+  },
+
+  "configuration_changes": {
+    "_description": "airflow.cfg configuration section/key changes",
+    "moved_to_database_section": [
+      "sql_alchemy_conn", "sql_engine_encoding", "sql_engine_collation_for_ids",
+      "sql_alchemy_pool_enabled", "sql_alchemy_pool_size", "sql_alchemy_max_overflow",
+      "sql_alchemy_pool_recycle", "sql_alchemy_pool_pre_ping", "sql_alchemy_schema",
+      "sql_alchemy_connect_args", "load_default_connections", "max_db_retries"
+    ],
+    "moved_to_logging_section": [
+      "base_log_folder", "remote_logging", "remote_log_conn_id", "remote_base_log_folder",
+      "encrypt_s3_logs", "logging_level", "fab_logging_level", "logging_config_class",
+      "colored_console_log", "colored_log_format", "colored_formatter_class",
+      "log_format", "simple_log_format", "task_log_prefix_template",
+      "log_filename_template", "log_processor_filename_template",
+      "dag_processor_manager_log_location", "task_log_reader",
+      "interleave_timestamp_parser"
+    ],
+    "renamed_options": [
+      {"old": "[scheduler].deactivate_stale_dags_interval", "new": "[scheduler].parsing_cleanup_interval"},
+      {"old": "[scheduler].max_threads", "new": "[scheduler].parsing_processes"},
+      {"old": "[scheduler].process_poll_interval", "new": "[scheduler].scheduler_idle_sleep_time"},
+      {"old": "[webserver].web_server_host", "new": "[api].host"},
+      {"old": "[webserver].base_url", "new": "[api].base_url"},
+      {"old": "[webserver].session_lifetime_days", "new": "[webserver].session_lifetime_minutes"},
+      {"old": "[webserver].force_log_out_after", "new": "[webserver].session_lifetime_minutes"},
+      {"old": "[webserver].update_fab_perms", "new": "[fab].update_fab_perms"},
+      {"old": "[webserver].auth_rate_limited", "new": "[fab].auth_rate_limited"},
+      {"old": "[webserver].auth_rate_limit", "new": "[fab].auth_rate_limit"},
+      {"old": "[api].auth_backend", "new": "[api].auth_backends"},
+      {"old": "[api].access_control_allow_origin", "new": "[api].access_control_allow_origins"},
+      {"old": "[celery].stalled_task_timeout", "new": "[scheduler].task_queued_timeout"},
+      {"old": "[celery].task_adoption_timeout", "new": "[scheduler].task_queued_timeout"},
+      {"old": "[kubernetes].worker_pods_pending_timeout", "new": "[scheduler].task_queued_timeout"},
+      {"old": "[admin].hide_sensitive_variable_fields", "new": "[core].hide_sensitive_var_conn_fields"},
+      {"old": "[admin].sensitive_variable_fields", "new": "[core].sensitive_var_conn_names"},
+      {"old": "[admin].non_pooled_task_slot_count", "new": "[core].default_pool_task_slot_count"},
+      {"old": "[admin].dag_concurrency", "new": "[core].max_active_tasks_per_dag"},
+      {"old": "[core].dag_concurrency", "new": "[core].max_active_tasks_per_dag"},
+      {"old": "[core].non_pooled_task_slot_count", "new": "[core].default_pool_task_slot_count"}
+    ],
+    "removed_options": [
+      "[webserver].error_logfile",
+      "[scheduler].dependency_detector",
+      "[kubernetes] section (use [kubernetes_executor])"
+    ]
+  },
+
+  "rest_api_changes": {
+    "_description": "REST API endpoint and response changes",
+    "endpoint_renames": [
+      {"old": "/api/v1/datasets", "new": "/api/v2/assets"},
+      {"old": "/api/v1/datasets/{uri}", "new": "/api/v2/assets/{uri}"},
+      {"old": "/api/v1/datasets/events", "new": "/api/v2/assets/events"},
+      {"old": "/api/v1/roles", "new": "/auth/fab/v1/roles"},
+      {"old": "/api/v1/permissions", "new": "/auth/fab/v1/permissions"},
+      {"old": "/api/v1/users", "new": "/auth/fab/v1/users"}
+    ],
+    "field_renames": [
+      {"old": "dataset_triggered", "new": "asset_triggered"},
+      {"old": "dataset_expression", "new": "asset_expression"},
+      {"old": "concurrency (in DAGDetail)", "new": "max_active_tasks"},
+      {"old": "schedule_interval (in API response)", "new": "timetable_summary"}
+    ]
+  },
+
+  "cli_changes": {
+    "_description": "CLI argument changes",
+    "removed_arguments": [
+      {"command": "task", "old": "--ignore-depends-on-past", "new": "--depends-on-past ignore"},
+      {"command": "backfill", "old": "--ignore-first-depends-on-past", "new": "Always True now"},
+      {"command": "backfill", "old": "--treat-dag-as-regex", "new": "--treat-dag-id-as-regex"},
+      {"command": "tasks list", "old": "--tree", "new": "Use 'airflow dag show'"},
+      {"command": "many commands", "old": "--subdir / -S", "new": "Use DAG bundles"},
+      {"command": "dag list-runs", "old": "-d / --dag-id (flag)", "new": "positional argument"}
+    ]
+  },
+
+  "reserved_keywords": {
+    "_description": "Names that conflict or are reserved in Airflow 3",
+    "items": [
+      {"keyword": "utils", "issue": "airflow.utils is a core module - custom modules named 'utils' at the DAG bundle root can shadow it"},
+      {"keyword": "models", "issue": "airflow.models is a core module - avoid naming custom packages 'models'"},
+      {"keyword": "operators", "issue": "airflow.operators is a core module - avoid naming custom packages 'operators'"},
+      {"keyword": "sensors", "issue": "airflow.sensors is a core module - avoid naming custom packages 'sensors'"},
+      {"keyword": "hooks", "issue": "airflow.hooks is a core module - avoid naming custom packages 'hooks'"}
+    ],
+    "notes": "With DAG bundles in Airflow 3, the bundle root is added to the import path. Any directory at the bundle root that shares a name with an Airflow core module (utils, models, operators, sensors, hooks) will shadow that module, causing import failures."
+  },
+
+  "behavioral_changes": {
+    "_description": "Behavior changes that don't involve API/import changes but affect DAG execution",
+    "items": [
+      {"change": "on_success_callback no longer fires for skipped tasks"},
+      {"change": "max_active_runs evaluated per-run instead of across all runs"},
+      {"change": "Connection.extra must be valid JSON (validation enforced)"},
+      {"change": "DAG.tags changed from list to MutableSet (no duplicates, unordered)"},
+      {"change": "Dataset/DatasetAlias no longer hashable (cannot use as dict keys or in sets)"},
+      {"change": "Dataset equality now considers extra dict"},
+      {"change": "All Param values must be JSON serializable"},
+      {"change": "Parsed date/time Param values are now RFC3339 compliant"},
+      {"change": "XCom pickling disabled by default (security)"},
+      {"change": "Cron schedules now use CronTriggerTimetable by default instead of CronDataIntervalTimetable"},
+      {"change": "logical_date semantics changed: now equals run_after instead of data_interval_start"},
+      {"change": "logical_date can be None for asset-triggered or manually-triggered DAG runs"},
+      {"change": "Minimum Pydantic version is 2.6.4"}
+    ]
+  },
+
+  "provider_alias_removals": {
+    "_description": "Deprecated provider package aliases that no longer work",
+    "aliases": [
+      {"old_alias": "atlas", "correct_name": "apache-atlas"},
+      {"old_alias": "aws", "correct_name": "amazon"},
+      {"old_alias": "azure", "correct_name": "microsoft-azure"},
+      {"old_alias": "cassandra", "correct_name": "apache-cassandra"},
+      {"old_alias": "crypto", "correct_name": "Use fernet directly"},
+      {"old_alias": "druid", "correct_name": "apache-druid"},
+      {"old_alias": "gcp", "correct_name": "google"},
+      {"old_alias": "gcp-api", "correct_name": "google"},
+      {"old_alias": "hdfs", "correct_name": "apache-hdfs"},
+      {"old_alias": "hive", "correct_name": "apache-hive"},
+      {"old_alias": "kubernetes", "correct_name": "cncf-kubernetes"},
+      {"old_alias": "mssql", "correct_name": "microsoft-mssql"},
+      {"old_alias": "pinot", "correct_name": "apache-pinot"},
+      {"old_alias": "s3", "correct_name": "amazon"},
+      {"old_alias": "spark", "correct_name": "apache-spark"},
+      {"old_alias": "webhdfs", "correct_name": "apache-hdfs"},
+      {"old_alias": "winrm", "correct_name": "Use microsoft-winrm"}
+    ]
+  },
+
+  "airflow_settings_changes": {
+    "_description": "Changes to airflow_local_settings.py",
+    "items": [
+      {"old": "policy", "new": "task_policy", "notes": "Renamed in airflow_local_settings"}
+    ]
+  },
+
+  "permissions_changes": {
+    "_description": "Permission name changes",
+    "items": [
+      {"old": "can_dag_read", "new": "can_read"},
+      {"old": "can_dag_edit", "new": "can_edit"}
+    ]
+  }
+}

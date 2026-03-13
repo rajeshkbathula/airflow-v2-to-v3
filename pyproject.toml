@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "airflow-v2-to-v3"
+version = "0.1.0"
+description = "Migrate Apache Airflow 2.x DAGs to Airflow 3.x — validate, transform, and diff"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Rajesh Bathula"}
+]
+keywords = ["airflow", "migration", "astronomer", "astro", "dag", "airflow3"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Code Generators",
+]
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+]
+
+[project.scripts]
+airflow-v2-to-v3 = "airflow_v2_to_v3.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/rajeshkbathula/airflow-v2-to-v3"
+Issues = "https://github.com/rajeshkbathula/airflow-v2-to-v3/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+airflow_v2_to_v3 = ["rules.json"]
