@@ -1,8 +1,14 @@
 # airflow-v2-to-v3
 
-CLI tool to **validate** and **migrate** Apache Airflow 2.x DAGs to Airflow 3.x, built for [Astronomer](https://www.astronomer.io/) (Astro) Airflow.
+[![PyPI version](https://img.shields.io/pypi/v/airflow-v2-to-v3.svg)](https://pypi.org/project/airflow-v2-to-v3/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/airflow-v2-to-v3.svg)](https://pypi.org/project/airflow-v2-to-v3/)
+[![Python versions](https://img.shields.io/pypi/pyversions/airflow-v2-to-v3.svg)](https://pypi.org/project/airflow-v2-to-v3/)
+[![CI](https://github.com/rajeshkbathula/airflow-v2-to-v3/actions/workflows/ci.yml/badge.svg)](https://github.com/rajeshkbathula/airflow-v2-to-v3/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-Ruff's AIR rules flag Airflow 3 compatibility issues but don't auto-fix them — this tool does the actual code transformation.
+**Migrate Apache Airflow 2.x DAGs to Airflow 3.x automatically** — validate, transform, and diff your DAGs with a single CLI command. Built for [Astronomer](https://www.astronomer.io/) (Astro) Airflow users and anyone upgrading from Airflow 2 to Airflow 3.
+
+> **Why this tool?** Ruff's AIR rules flag Airflow 3 compatibility issues but don't auto-fix them. `airflow-v2-to-v3` does the actual code transformation — handling 200+ migration rules across imports, parameters, context variables, and more.
 
 ## Features
 

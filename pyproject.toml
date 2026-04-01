@@ -12,10 +12,16 @@ requires-python = ">=3.9"
 authors = [
     {name = "Rajesh Bathula"}
 ]
-keywords = ["airflow", "migration", "astronomer", "astro", "dag", "airflow3"]
+keywords = [
+    "airflow", "airflow3", "airflow-migration", "dag-migration",
+    "astronomer", "astro", "apache-airflow", "airflow-upgrade",
+    "dag", "workflow", "data-engineering", "migrate-airflow",
+    "airflow2", "airflow-v2-v3", "code-migration", "codemods"
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -23,6 +29,10 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
 ]
 dependencies = [
     "click>=8.0",
