@@ -5,6 +5,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/airflow-v2-to-v3.svg)](https://pypi.org/project/airflow-v2-to-v3/)
 [![CI](https://github.com/rajeshkbathula/airflow-v2-to-v3/actions/workflows/ci.yml/badge.svg)](https://github.com/rajeshkbathula/airflow-v2-to-v3/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/rajeshbathula294)
 
 **Migrate Apache Airflow 2.x DAGs to Airflow 3.x automatically** — validate, transform, and diff your DAGs with a single CLI command. Built for [Astronomer](https://www.astronomer.io/) (Astro) Airflow users and anyone upgrading from Airflow 2 to Airflow 3.
 
